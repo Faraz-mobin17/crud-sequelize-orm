@@ -2,11 +2,21 @@ const express = require("express");
 const { engine } = require("express-handlebars");
 const path = require("path");
 const db = require("./db/connection.db");
+const Handlebars = require("handlebars");
+
+const {
+  allowInsecurePrototypeAccess,
+} = require("@handlebars/allow-prototype-access");
 
 const app = express();
 // handlebars views
 // view engine setup
-app.engine("handlebars", engine());
+app.engine(
+  "handlebars",
+  engine({
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
+  })
+);
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
@@ -23,7 +33,7 @@ app.get("/", (req, res) => {
 // import routes
 const gigRouter = require("./routes/gigs");
 
-app.use("/api/v1/gigs", gigRouter);
+app.use("/api/v1/gigs/", gigRouter);
 
 app.listen(3000, () => {
   console.log(`listening on port 3000`);
